@@ -1,2 +1,2 @@
 # Roblox-Group-Rank-Bot
-This bot will ranking your group for you with just one command!
+Right now the commands are only in Turkish, if you want me to do it in a different language, contact me via discord.
