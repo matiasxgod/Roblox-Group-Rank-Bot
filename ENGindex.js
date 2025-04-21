@@ -14,14 +14,14 @@ const client = new Client({
     intents: [GatewayIntentBits.Guilds]
 });
 
-const commands = [ // Slash Commands
+const commands = [ //Slash Commands
     new SlashCommandBuilder()
         .setName('rank')
         .setDescription('Change the rank of a specified person.')
         .addSubcommand(subcommand =>
             subcommand
-                .setName('set')
-                .setDescription('Changes the rank of the person.')
+                .setName('change')
+                .setDescription('Changes the rank of a person.')
                 .addStringOption(option =>
                     option.setName('person')
                         .setDescription('The person whose rank you want to change.')
@@ -33,39 +33,39 @@ const commands = [ // Slash Commands
                         .setAutocomplete(true)) 
                 .addStringOption(option =>
                     option.setName('reason')
-                        .setDescription('The reason for the rank change')
+                        .setDescription('The reason for the rank change.')
                         .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('promote')
-                .setDescription('Promotes the person, increasing their rank by one level.')
+                .setDescription('Gives a person a promotion, increases their rank by one.')
                 .addStringOption(option =>
                     option.setName('person')
                         .setDescription('The person you want to promote.')
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('reason')
-                        .setDescription('The reason for the promotion')
+                        .setDescription('The reason for the promotion.')
                         .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('demote')
-                .setDescription('Demotes the person, decreasing their rank by one level.')
+                .setDescription('Demotes a person, decreases their rank by one.')
                 .addStringOption(option =>
                     option.setName('person')
                         .setDescription('The person you want to demote.')
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('reason')
-                        .setDescription('The reason for the demotion')
+                        .setDescription('The reason for the demotion.')
                         .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('query')
-                .setDescription('Query the rank of a person')
+                .setDescription('Queries the rank of a person.')
                 .addStringOption(option =>
                     option.setName('person')
-                        .setDescription('The person whose rank you want to know.')
+                        .setDescription('The person whose rank you want to query.')
                         .setRequired(true)))
 ].map(command => command.toJSON());
 
@@ -84,7 +84,7 @@ const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
     }
 })();
 
-async function getCsrfToken() { // CSRF Token
+async function getCsrfToken() { // csrf token
     try {
         const authResponse = await axios.get(
             "https://users.roblox.com/v1/users/authenticated",
@@ -98,7 +98,7 @@ async function getCsrfToken() { // CSRF Token
             return null;
         }
 
-        console.log("ROBLOX_COOKIE verified, getting CSRF Token...");
+        console.log("ROBLOX_COOKIE validated, retrieving CSRF Token...");
 
         try {
             await axios.post(
@@ -114,10 +114,10 @@ async function getCsrfToken() { // CSRF Token
             }
         }
 
-        console.error("Could not get CSRF Token.");
+        console.error("CSRF Token could not be retrieved.");
         return null;
     } catch (error) {
-        console.error(`CSRF Token fetching failed: ${error.message}`);
+        console.error(`CSRF Token retrieval failed: ${error.message}`);
         return null;
     }
 }
@@ -136,11 +136,11 @@ async function getUserIdFromUsername(username) {
         return response.data.data.length > 0 ? response.data.data[0].id : null;
     } catch (error) {
         if (error.response && error.response.status === 429) {
-            console.log("Rate limit error, waiting for 1 second...");
+            console.log("Rate limit error, waiting 1 second...");
             await delay(1000);
             return getUserIdFromUsername(username);
         } else {
-            console.error(`Could not get user ID: ${error.message}`);
+            console.error(`Failed to retrieve user ID: ${error.message}`);
             return null;
         }
     }
@@ -160,28 +160,28 @@ async function getRoleByInput(input) {
         );
         return role || null;
     } catch (error) {
-        console.error(`Could not fetch rank information: ${error.message}`);
+        console.error(`Failed to retrieve rank info: ${error.message}`);
         return null;
     }
 }
 
-const ALLOWED_ROLES = ["Ranking", ""];
+const ALLOWED_ROLES = ["Rank Assigning", "Board of Directors"];
 
 async function getUserRole(userId) {
     try {
         const response = await axios.get(`https://groups.roblox.com/v2/users/${userId}/groups/roles`);
         const userGroup = response.data.data.find((group) => group.group.id === parseInt(ROBLOX_GROUP_ID));
         if (userGroup) {
-            return userGroup.role; 
+            return userGroup.role;
         }
         return null;
     } catch (error) {
-        console.error(`Could not fetch user role: ${error.message}`);
+        console.error(`Failed to retrieve user role: ${error.message}`);
         return null;
     }
 }
 
-async function changeRank(userId, rankInput, interaction, reason, isDemotion = false) { // Change Rank
+async function changeRank(userId, rankInput, interaction, reason, isDemote = false) { // rank changing
     const userHasPermission = interaction.member.roles.cache.some(role =>
         ALLOWED_ROLES.includes(role.name)
     );
@@ -199,7 +199,7 @@ async function changeRank(userId, rankInput, interaction, reason, isDemotion = f
 
     const csrfToken = await getCsrfToken();
     if (!csrfToken) {
-        return interaction.editReply("Could not obtain CSRF Token.");
+        return interaction.editReply("CSRF Token could not be retrieved.");
     }
 
     const newRole = await getRoleByInput(rankInput);
@@ -217,7 +217,7 @@ async function changeRank(userId, rankInput, interaction, reason, isDemotion = f
             username = userInfo.data.name;
         }
     } catch (error) {
-        console.error(`Could not fetch username: ${error.message}`);
+        console.error(`Failed to retrieve username: ${error.message}`);
     }
 
     try {
@@ -229,7 +229,7 @@ async function changeRank(userId, rankInput, interaction, reason, isDemotion = f
             }
         }
     } catch (error) {
-        console.error(`Could not fetch current rank: ${error.message}`);
+        console.error(`Failed to retrieve user's current rank: ${error.message}`);
     }
 
     try {
@@ -245,18 +245,18 @@ async function changeRank(userId, rankInput, interaction, reason, isDemotion = f
             },
         );
 
-        const userFullInfo = await getUserFullInfo(userId); 
+        const userFullInfo = await getUserFullInfo(userId);
 
         let statusMessage = '';
-        let embedColor = '#00FF00'; 
+        let embedColor = '#00FF00';
 
         if (response.status === 200) {
             if (currentRoleRank < newRole.rank) {
-                statusMessage = `**${userFullInfo.name} (${userFullInfo.id})** has been promoted to **${newRole.name}**!`;
+                statusMessage = `**${userFullInfo.name} (${userFullInfo.id})** has been promoted to the rank of **${newRole.name}**!`;
             } else if (currentRoleRank > newRole.rank) {
-                statusMessage = `**${userFullInfo.name} (${userFullInfo.id})** has been demoted to **${newRole.name}**!`;
+                statusMessage = `**${userFullInfo.name} (${userFullInfo.id})** has been demoted to the rank of **${newRole.name}**!`;
             } else {
-                statusMessage = `**${userFullInfo.name} (${userFullInfo.id})** is already at the **${newRole.name}** rank.`;
+                statusMessage = `**${userFullInfo.name} (${userFullInfo.id})** is already at the rank of **${newRole.name}**.`;
             }
 
             const embed = new EmbedBuilder()
@@ -265,9 +265,9 @@ async function changeRank(userId, rankInput, interaction, reason, isDemotion = f
                 .setDescription(statusMessage)
                 .addFields(
                     { name: 'Reason', value: reason },
-                    { name: 'Performed by:', value: `<@${interaction.user.id}>` }
+                    { name: 'Action Taken By:', value: `<@${interaction.user.id}>` }
                 )
-                .setFooter({ text: 'Provided by @matiasxgod' })
+                .setFooter({ text: '@matiasxgod provided.' })
                 .setTimestamp();
 
             await interaction.editReply({ embeds: [embed] });
@@ -291,7 +291,7 @@ async function getUserFullInfo(userId) {
             id: response.data.id
         };
     } catch (error) {
-        console.error(`Could not fetch user information: ${error.message}`);
+        console.error(`Failed to retrieve user info: ${error.message}`);
         return { name: "Unknown", id: "Unknown" };
     }
 }
@@ -300,19 +300,20 @@ async function autocompleteRoles(interaction) {
     const focusedOption = interaction.options.getFocused(true);
     const roleNames = await getRoleNames();
     const filteredRoles = roleNames.filter(role =>
-        role.toLowerCase().includes(focusedOption.value.toLowerCase())
+        role.toLowerCase().includes(focusedOption.value.toLowerCase()) && role.length <= 25
     );
-
-    await interaction.respond(
-        filteredRoles.map(role => ({ name: role, value: role }))
-    );
+    const responseChoices = filteredRoles.slice(0, 25).map(role => ({
+        name: role,
+        value: role
+    }));
+    await interaction.respond(responseChoices);
 }
 
 client.on('interactionCreate', async (interaction) => { // Commands
     if (interaction.isAutocomplete()) {
         if (interaction.commandName === 'rank') {
             const subcommand = interaction.options.getSubcommand();
-            if (subcommand === 'set') {
+            if (subcommand === 'change') {
                 await autocompleteRoles(interaction);
             }
         }
@@ -325,7 +326,7 @@ client.on('interactionCreate', async (interaction) => { // Commands
     if (commandName === 'rank') {
         const subcommand = interaction.options.getSubcommand();
 
-        if (subcommand === 'set') {
+        if (subcommand === 'change') {
             const username = interaction.options.getString('person');
             const rankInput = interaction.options.getString('rank');
             const reason = interaction.options.getString('reason');
@@ -358,7 +359,7 @@ client.on('interactionCreate', async (interaction) => { // Commands
 
             const currentRole = await getUserRole(userId);
             if (!currentRole) {
-                return interaction.reply(`Could not fetch role information for user "${username}".`);
+                return interaction.reply(`Could not retrieve role for user "${username}".`);
             }
 
             const nextRank = currentRole.rank + 1;
@@ -382,7 +383,7 @@ client.on('interactionCreate', async (interaction) => { // Commands
 
             const currentRole = await getUserRole(userId);
             if (!currentRole) {
-                return interaction.reply(`Could not fetch role information for user "${username}".`);
+                return interaction.reply(`Could not retrieve role for user "${username}".`);
             }
 
             const nextRank = currentRole.rank - 1;
@@ -405,16 +406,16 @@ client.on('interactionCreate', async (interaction) => { // Commands
 
             const currentRole = await getUserRole(userId);
             if (!currentRole) {
-                return interaction.reply(`Could not fetch role information for user "${username}".`);
+                return interaction.reply(`Could not retrieve role for user "${username}".`);
             }
 
-            const userFullInfo = await getUserFullInfo(userId);
+            const userFullInfo = await getUserFullInfo(userId); 
 
             const embed = new EmbedBuilder()
                 .setColor('#00FF00') 
                 .setTitle('Rank Query')
                 .setDescription(`**${userFullInfo.name} (${userFullInfo.id})**'s rank: **${currentRole.name}**`)
-                .setFooter({ text: 'Provided by @matiasxgod' })
+                .setFooter({ text: '@matiasxgod provided.' })
                 .setTimestamp();
 
             await interaction.reply({ embeds: [embed] });
@@ -425,9 +426,16 @@ client.on('interactionCreate', async (interaction) => { // Commands
 async function getRoleNames() {
     try {
         const response = await axios.get(`https://groups.roblox.com/v1/groups/${ROBLOX_GROUP_ID}/roles`);
-        return response.data.roles.map(role => role.name); 
+        return response.data.roles.map(role => role.name);
     } catch (error) {
-        console.error(`Could not fetch roles: ${error.message}`);
+        console.error(`Failed to retrieve roles: ${error.message}`);
+        
+        
+        if (error.response && error.response.status === 503) {
+            console.log('Roblox API temporarily unavailable. Waiting for 5 seconds...');
+            await delay(5000); 
+            return getRoleNames(); 
+        }
         return [];
     }
 }
