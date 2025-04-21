@@ -20,7 +20,7 @@ const commands = [ //Slash Komutları
         .setDescription('Belirlenen kişinin rütbesini değiştir.')
         .addSubcommand(subcommand =>
             subcommand
-                .setName('ver')
+                .setName('değiştir')
                 .setDescription('Kişinin rütbesini değiştirir.')
                 .addStringOption(option =>
                     option.setName('kişi')
@@ -71,7 +71,6 @@ const commands = [ //Slash Komutları
 
 const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
 
-
 (async () => {
     try {
         console.log('Slash komutları kaydediliyor...');
@@ -84,7 +83,6 @@ const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
         console.error(error);
     }
 })();
-
 
 async function getCsrfToken() { // csrf token
     try {
@@ -174,7 +172,7 @@ async function getUserRole(userId) {
         const response = await axios.get(`https://groups.roblox.com/v2/users/${userId}/groups/roles`);
         const userGroup = response.data.data.find((group) => group.group.id === parseInt(ROBLOX_GROUP_ID));
         if (userGroup) {
-            return userGroup.role; 
+            return userGroup.role;
         }
         return null;
     } catch (error) {
@@ -182,6 +180,7 @@ async function getUserRole(userId) {
         return null;
     }
 }
+
 async function changeRank(userId, rankInput, interaction, reason, isTenzil = false) { // rank değiştirme
     const userHasPermission = interaction.member.roles.cache.some(role =>
         ALLOWED_ROLES.includes(role.name)
@@ -246,10 +245,10 @@ async function changeRank(userId, rankInput, interaction, reason, isTenzil = fal
             },
         );
 
-        const userFullInfo = await getUserFullInfo(userId); 
+        const userFullInfo = await getUserFullInfo(userId);
 
         let statusMessage = '';
-        let embedColor = '#00FF00'; 
+        let embedColor = '#00FF00';
 
         if (response.status === 200) {
             if (currentRoleRank < newRole.rank) {
@@ -297,25 +296,24 @@ async function getUserFullInfo(userId) {
     }
 }
 
-
 async function autocompleteRoles(interaction) {
     const focusedOption = interaction.options.getFocused(true);
     const roleNames = await getRoleNames();
     const filteredRoles = roleNames.filter(role =>
-        role.toLowerCase().includes(focusedOption.value.toLowerCase())
+        role.toLowerCase().includes(focusedOption.value.toLowerCase()) && role.length <= 25
     );
-
-    await interaction.respond(
-        filteredRoles.map(role => ({ name: role, value: role }))
-    );
+    const responseChoices = filteredRoles.slice(0, 25).map(role => ({
+        name: role,
+        value: role
+    }));
+    await interaction.respond(responseChoices);
 }
-
 
 client.on('interactionCreate', async (interaction) => { // Komutlar
     if (interaction.isAutocomplete()) {
         if (interaction.commandName === 'rütbe') {
             const subcommand = interaction.options.getSubcommand();
-            if (subcommand === 'ver') {
+            if (subcommand === 'değiştir') {
                 await autocompleteRoles(interaction);
             }
         }
@@ -328,7 +326,7 @@ client.on('interactionCreate', async (interaction) => { // Komutlar
     if (commandName === 'rütbe') {
         const subcommand = interaction.options.getSubcommand();
 
-        if (subcommand === 'ver') {
+        if (subcommand === 'değiştir') {
             const username = interaction.options.getString('kişi');
             const rankInput = interaction.options.getString('rütbe');
             const reason = interaction.options.getString('sebep');
@@ -428,9 +426,16 @@ client.on('interactionCreate', async (interaction) => { // Komutlar
 async function getRoleNames() {
     try {
         const response = await axios.get(`https://groups.roblox.com/v1/groups/${ROBLOX_GROUP_ID}/roles`);
-        return response.data.roles.map(role => role.name); 
+        return response.data.roles.map(role => role.name);
     } catch (error) {
         console.error(`Roller alınamadı: ${error.message}`);
+        
+        
+        if (error.response && error.response.status === 503) {
+            console.log('Roblox API geçici olarak kullanılamaz. 5 saniye bekleniyor...');
+            await delay(5000); 
+            return getRoleNames(); 
+        }
         return [];
     }
 }
