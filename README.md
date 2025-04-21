@@ -1,7 +1,7 @@
 # Roblox-Group-Rank-Bot
-# Eğer botu kullanmak istiyorsanız benimle iletişime geçmeniz gerekli.
-If you want to use the bot you need to contact me.
-Discord: @matiasxgod
+## Eğer botu kullanmak istiyorsanız benimle iletişime geçmeniz gerekli.
+## If you want to use the bot you need to contact me.
+## Discord: @matiasxgod
 
 Don't forget to change **ALLOWED ROLES** or you won't be able to use the bot!
 
