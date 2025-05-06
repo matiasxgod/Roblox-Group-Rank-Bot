@@ -1,0 +1,62 @@
+[2025-05-06T12:42:08.259Z] [INFO] aktiflik komutu yüklendi.
+[2025-05-06T12:42:08.263Z] [INFO] branş-istek komutu yüklendi.
+[2025-05-06T12:42:08.263Z] [INFO] branş-at komutu yüklendi.
+[2025-05-06T12:42:08.264Z] [INFO] branş-rütbe komutu yüklendi.
+[2025-05-06T12:42:08.268Z] [INFO] grup komutu yüklendi.
+[2025-05-06T12:42:08.268Z] [INFO] ping komutu yüklendi.
+[2025-05-06T12:42:08.270Z] [INFO] rütbe komutu yüklendi.
+[2025-05-06T12:42:08.271Z] [INFO] yenile komutu yüklendi.
+[2025-05-06T12:42:08.797Z] [SUCCESS] Komutlar başarıyla deploy edildi.
+[2025-05-06T12:43:36.659Z] [INFO] /rütbe komutu çalıştırıldı
+{
+  "subcommand": "değiştir",
+  "user": "matiasxgod (355089428055719946)",
+  "guild": "PPSSPP (1352600012311363656)"
+}
+[2025-05-06T12:43:37.037Z] [DEBUG] Discord ismi üzerinden Roblox ID bulundu
+{
+  "discordId": "957569629335748688",
+  "displayName": "matiasxgodW",
+  "robloxId": 4337619255
+}
+[2025-05-06T12:43:37.037Z] [DEBUG] Rütbe değiştirme işlemi başlatıldı
+{
+  "target": 4337619255,
+  "rankInput": "OR-1/A Er",
+  "reason": "123213321321321312321",
+  "executor": "matiasxgod (355089428055719946)"
+}
+[2025-05-06T12:43:39.965Z] [WARNING] Tenzil: matiasxgodW (4337619255) - OF-7 Tümgeneral -> OR-1/A Er
+{
+  "executor": "matiasxgod (355089428055719946)",
+  "target": "matiasxgodW (4337619255)",
+  "oldRank": "OF-7 Tümgeneral",
+  "newRank": "OR-1/A Er",
+  "reason": "123213321321321312321"
+}
+[2025-05-06T13:05:38.624Z] [INFO] /rütbe komutu çalıştırıldı
+{
+  "subcommand": "değiştir",
+  "user": "matiasxgod (355089428055719946)",
+  "guild": "PPSSPP (1352600012311363656)"
+}
+[2025-05-06T13:05:39.016Z] [DEBUG] Roblox kullanıcı adından ID bulundu
+{
+  "username": "matiasxgodw",
+  "userId": 4337619255
+}
+[2025-05-06T13:05:39.017Z] [DEBUG] Rütbe değiştirme işlemi başlatıldı
+{
+  "target": 4337619255,
+  "rankInput": "OR-5/B Asb. Çavuş",
+  "reason": "123",
+  "executor": "matiasxgod (355089428055719946)"
+}
+[2025-05-06T13:05:42.019Z] [SUCCESS] Terfi: matiasxgodW (4337619255) - OR-1/A Er -> OR-5/B Asb. Çavuş
+{
+  "executor": "matiasxgod (355089428055719946)",
+  "target": "matiasxgodW (4337619255)",
+  "oldRank": "OR-1/A Er",
+  "newRank": "OR-5/B Asb. Çavuş",
+  "reason": "123"
+}
