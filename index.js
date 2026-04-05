@@ -9,7 +9,6 @@ deployCommands()
   .then(() => console.log('Komutlar başarıyla deploy edildi.'))
   .catch((err) => console.error('Komut deploy hatası:', err));
 
-// Discord istemcisini yapılandır
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -19,10 +18,10 @@ const client = new Client({
     ]
 });
 
-// Logger modülünü önce yükle
+--//
 const logger = require('./utils/logger');
 
-// Komutları yükle
+--// 
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -44,7 +43,7 @@ for (const file of commandFiles) {
     }
 }
 
-// Roblox oturumunu başlat
+--// 
 async function initializeRoblox() {
     try {
         const currentUser = await noblox.setCookie(process.env.ROBLOX_COOKIE);
@@ -56,7 +55,7 @@ async function initializeRoblox() {
     }
 }
 
-// Bot hazır olduğunda
+--// 
 client.once('ready', async () => {
     console.log(`${client.user.tag} olarak giriş yapıldı!`);
     client.user.setActivity('| TAES | Turkish Armed Forces', { type: ActivityType.Playing });
@@ -72,7 +71,7 @@ client.once('ready', async () => {
     }
 });
 
-// Komut işleyici
+--// 
 client.on('interactionCreate', async interaction => {
     // Otomatik tamamlama
     if (interaction.isAutocomplete()) {
@@ -87,7 +86,7 @@ client.on('interactionCreate', async interaction => {
         return;
     }
 
-    // Slash komutları
+    --//
     if (!interaction.isChatInputCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
@@ -106,5 +105,5 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-// Discord'a bağlan
+--// 
 client.login(process.env.TOKEN);
