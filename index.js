@@ -31,7 +31,7 @@ for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
         
-        // Komut dosyasının gerekli özellikleri içerip içermediğini kontrol et
+        
         if (command.data && command.data.name && command.execute) {
             client.commands.set(command.data.name, command);
             console.log(`${command.data.name} komutu yüklendi.`);
