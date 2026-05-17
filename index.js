@@ -59,10 +59,10 @@ async function initializeRoblox() {
 client.once('ready', async () => {
     console.log(`${client.user.tag} olarak giriş yapıldı!`);
     client.user.setActivity('| TAES | Turkish Armed Forces', { type: ActivityType.Playing });
-    // Logger'a client'ı ata - BURADA HATA ALIYORDUK
+    
     logger.setClient(client);
     
-    // Roblox oturumunu başlat
+  
     const robloxInitialized = await initializeRoblox();
     if (robloxInitialized) {
         console.log('Roblox entegrasyonu hazır!');
@@ -73,7 +73,7 @@ client.once('ready', async () => {
 
 --// 
 client.on('interactionCreate', async interaction => {
-    // Otomatik tamamlama
+   
     if (interaction.isAutocomplete()) {
         const command = client.commands.get(interaction.commandName);
         if (!command || !command.autocomplete) return;
